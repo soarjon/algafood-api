@@ -31,12 +31,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepository {
 
 	@Override
 	public Restaurante buscar(Long id) {
-		Restaurante restaurante = entityManager.find(Restaurante.class, id);
-		if(restaurante == null) {
-			throw new EmptyResultDataAccessException(1);
-		}
-		
-		return restaurante;
+		return entityManager.find(Restaurante.class, id);
 	}
 
 	@Override
