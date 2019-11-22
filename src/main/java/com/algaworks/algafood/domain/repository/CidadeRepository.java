@@ -12,5 +12,5 @@ public interface CidadeRepository {
 
 	public Cidade buscar(Long id);
 
-	public void deletar(Cidade cidade);
+	public void deletar(Long cidadeId);
 }

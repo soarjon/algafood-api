@@ -8,7 +8,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import com.algaworks.algafood.domain.model.Estado;
@@ -33,12 +32,7 @@ public class EstadoRepositoryImpl implements EstadoRepository {
 
 	@Override
 	public Estado buscar(Long id) {
-		Estado estado = entityManager.find(Estado.class, id);
-		if(estado == null) {
-			throw new EmptyResultDataAccessException(1);
-		}
-		
-		return estado;
+		return entityManager.find(Estado.class, id);
 	}
 
 	@Transactional
