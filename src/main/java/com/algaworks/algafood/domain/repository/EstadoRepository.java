@@ -12,5 +12,5 @@ public interface EstadoRepository {
 
 	public Estado buscar(Long id);
 
-	public void deletar(Estado estado);
+	public void deletar(Long id);
 }
