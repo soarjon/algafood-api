@@ -20,43 +20,31 @@ public class CadastroEstadoService {
 	private EstadoRepository estadoRepository;
 
 	public List<Estado> listar() {
-		return estadoRepository.listar();
+		return estadoRepository.findAll();
 	}
 	
 	public Estado buscar(Long estadoId) {
-		Estado estado = null;
-		try {
-			estado = estadoRepository.buscar(estadoId);
-		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não há nenhum estado cadastrado com o código %d", estadoId));
-		}
-		
-		return estado;
-		
+			return estadoRepository.findById(estadoId).orElseThrow(() -> 
+				new EntidadeNaoEncontradaException(
+					String.format("Não há nenhum estado cadastrado com o código %d", estadoId)));
 	}
 
 	public Estado salvar(Estado estado) {
-		return estadoRepository.salvar(estado);
+		return estadoRepository.save(estado);
 	}
 	
 	public Estado atualizar(Estado estado, Long estadoId) {
-		Estado estadoAtual = null;
-		try {
-			estadoAtual = estadoRepository.buscar(estadoId);
-			BeanUtils.copyProperties(estado, estadoAtual, "id");
-			estadoRepository.salvar(estadoAtual);
-		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não há nenhum estado cadastrado com o código %d", estadoId));
-		}
+		Estado estadoAtual = buscar(estadoId);
 		
+		BeanUtils.copyProperties(estado, estadoAtual, "id");
+		estadoRepository.save(estadoAtual);
+	
 		return estadoAtual;
 	}
 	
 	public void deletar(Long estadoId) {
 		try {
-			estadoRepository.deletar(estadoId);
+			estadoRepository.deleteById(estadoId);
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
 					String.format("Não há nenhum estado cadastrado com o código %d", estadoId));
