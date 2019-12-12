@@ -60,7 +60,6 @@ public class TesteController {
 		return restaraunteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 	
-<<<<<<< HEAD
 	@GetMapping("/restaurantes/com-frete-gratis")
 	public List<Restaurante> restaurantesComFreteGratis(@RequestParam String nome) {
 		return restaraunteRepository.findComFreteGratis(nome);
@@ -70,9 +69,4 @@ public class TesteController {
 	public Optional<Restaurante> buscarPrimeiro() {
 		return restaraunteRepository.buscarPrimeiro();
 	}
-=======
-	
-	
-	
->>>>>>> e03505b7859d303ce221fe3c0a7964b4d612366e
 }

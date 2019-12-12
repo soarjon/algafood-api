@@ -57,10 +57,7 @@ public class CadastroRestauranteService {
 		restaurante.setCozinha(cozinha);
 		BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
 		
-<<<<<<< HEAD
 		restauranteRepository.save(restauranteAtual);
-=======
->>>>>>> e03505b7859d303ce221fe3c0a7964b4d612366e
 		return restauranteAtual;
 	}
 }

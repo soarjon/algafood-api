@@ -4,11 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
-<<<<<<< HEAD
 		<artifactId>spring-boot-starter-parent</artifactId>
-=======
-		<artifactId>spring-b	oot-starter-parent</artifactId>
->>>>>>> e03505b7859d303ce221fe3c0a7964b4d612366e
 		<version>2.1.8.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
