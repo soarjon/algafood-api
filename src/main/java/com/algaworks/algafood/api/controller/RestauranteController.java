@@ -35,14 +35,13 @@ public class RestauranteController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
-		Restaurante restaurante = cadastroRestauranteService.buscar(id);
-		
-		if(restaurante == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	public ResponseEntity<?> buscar(@PathVariable Long id) {
+		try {
+			Restaurante restaurante = cadastroRestauranteService.buscar(id);
+			return ResponseEntity.ok(restaurante);
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
-		
-		return ResponseEntity.ok(restaurante);
 	}
 	
 	@PostMapping
