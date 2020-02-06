@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
-import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 
 @Service
 public class CadastroRestauranteService {
 	
+	private static final String MSG_RESTAURANTE_NAO_EXISTENTE = "Não há nenhum restaraurante cadastrado com o código %d";
+
 	@Autowired
 	private RestauranteRepository restauranteRepository;
 	
 	@Autowired
-	private CozinhaRepository cozinhaRepository;
+	private CadastroCozinhaService cozinhaService;
 	
 	public List<Restaurante> listar() {
 		return restauranteRepository.findAll();
@@ -27,15 +28,13 @@ public class CadastroRestauranteService {
 	
 	public Restaurante buscar(Long id) {
 		return restauranteRepository.findById(id).orElseThrow(() -> 
-				new EntidadeNaoEncontradaException(String.format("Não há nenhum restaraurante cadastrado com o código %d", id)));
+				new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_EXISTENTE, id)));
 	}
 	
 	public Restaurante salvar(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
 		
-		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format("Não há nenhuma cozinha cadastrada com o código %d", cozinhaId)));
+		Cozinha cozinha = cozinhaService.buscarOuFalhar(cozinhaId);
 
 		restaurante.setCozinha(cozinha);
 		
@@ -43,21 +42,16 @@ public class CadastroRestauranteService {
 	}
 	
 	public Restaurante atualizar(Restaurante restaurante, Long restauranteId) {
-		Long cozinhaId = restaurante.getCozinha().getId();
-		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format("Não há nenhuma cozinha cadastrada com o código %d", cozinhaId)));
-	
-		
 		Restaurante restauranteAtual = buscar(restauranteId);
-		if(restauranteAtual == null) {
-			return restauranteAtual;
-		}
+		
+		Long cozinhaId = restaurante.getCozinha().getId();
+		
+		Cozinha cozinha = cozinhaService.buscarOuFalhar(cozinhaId);
 		
 		restaurante.setCozinha(cozinha);
+		
 		BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro");
 		
-		restauranteRepository.save(restauranteAtual);
 		return restauranteAtual;
 	}
 }

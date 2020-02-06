@@ -32,13 +32,8 @@ public class EstadoController {
 	}
 	
 	@GetMapping("/{estadoId}")
-	public ResponseEntity<?> buscar(@PathVariable Long estadoId) {
-		try {
-			Estado estado = cadastroEstadoService.buscar(estadoId);
-			return ResponseEntity.ok(estado);
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
+	public Estado buscar(@PathVariable Long estadoId) {
+		return cadastroEstadoService.buscar(estadoId);
 	}
 	
 	@PostMapping

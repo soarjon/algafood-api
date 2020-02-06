@@ -2,7 +2,6 @@ package com.algaworks.algafood.domain.service;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,16 +12,18 @@ import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
-import com.algaworks.algafood.domain.repository.EstadoRepository;
 
 @Service
 public class CadastroCidadeService {
 	
+	private static final String MSG_CIDADE_EM_USO = "Entidade de código %d não pode ser excluida, pois está sendo usada";
+	private static final String MSG_CIDADE_NAO_EXISTENTE = "Não há nenhum estado cadastrado com o código %d";
+
 	@Autowired
 	private CidadeRepository cidadeRepository;
 	
 	@Autowired
-	private EstadoRepository estadoRepository;
+	private CadastroEstadoService estadoService;
 
 	public List<Cidade> listar() {
 		return cidadeRepository.findAll();
@@ -31,48 +32,29 @@ public class CadastroCidadeService {
 	public Cidade buscar(Long cidadeId) {
 		return cidadeRepository.findById(cidadeId).orElseThrow(() -> 
 				new EntidadeNaoEncontradaException(
-						String.format("Não há nenhum estado cadastrado com o código %d", cidadeId)));		
+						String.format(MSG_CIDADE_NAO_EXISTENTE, cidadeId)));		
 	}
 
 	public Cidade salvar(Cidade cidade) {
 		Long estadoId = cidade.getEstado().getId();
-		Estado estado = estadoRepository.findById(estadoId).orElseThrow(() -> 
-			new EntidadeNaoEncontradaException(
-				String.format("Não há nenhum estado cadastrado com o código %d", estadoId)));
+		
+		Estado estado = estadoService.buscar(estadoId);
 		
 		cidade.setEstado(estado);
+		
 		return cidadeRepository.save(cidade);
 	}
 	
-	public Cidade atualizar(Cidade cidade, Long cidadeId) {
-		Long estadoId = cidade.getEstado().getId();
-		Estado estado = estadoRepository.findById(estadoId)
-				.orElseThrow((() -> new EntidadeNaoEncontradaException(
-						String.format("Não há nenhum estado cadastrado com o código %d", estadoId))));
-		
-		Cidade cidadeAtual = buscar(cidadeId);
-		
-		if(cidadeAtual == null) {
-			return cidadeAtual;
-		}
-		
-		cidade.setEstado(estado);
-		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-		
-		cidadeRepository.save(cidadeAtual);
-		
-		return cidadeAtual;
-	}
 	
 	public void deletar(Long cidadeId) {
 		try {
 			cidadeRepository.deleteById(cidadeId);
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
-					String.format("Não há nenhuma cidade cadastrado com o código %d", cidadeId));
+					String.format(MSG_CIDADE_NAO_EXISTENTE, cidadeId));
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-					String.format("Entidade de código %d não pode ser excluida, pois está sendo usada", cidadeId));
+					String.format(MSG_CIDADE_EM_USO, cidadeId));
 		}
 	}
 }

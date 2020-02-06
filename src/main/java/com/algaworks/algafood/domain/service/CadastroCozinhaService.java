@@ -13,6 +13,8 @@ import com.algaworks.algafood.domain.repository.CozinhaRepository;
 @Service
 public class CadastroCozinhaService {
 	
+	private static final String MSG_COZINHA_NAO_EXISTENTE = "Não existe cozinha cadastrada com o código %d";
+	
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
@@ -26,12 +28,18 @@ public class CadastroCozinhaService {
 			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe cozinha cadastrada com o código %d", id));
+					String.format(MSG_COZINHA_NAO_EXISTENTE, id));
 		
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
 					String.format("A entidade de código %d não pode ser excluida, pois está em uso", id));
 		}
 		
+	}
+
+	public Cozinha buscarOuFalhar(Long cozinhaId) {
+		return cozinhaRepository.findById(cozinhaId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(
+						String.format(MSG_COZINHA_NAO_EXISTENTE, cozinhaId)));
 	}
 }
