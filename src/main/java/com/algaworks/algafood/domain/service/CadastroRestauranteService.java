@@ -6,7 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
@@ -14,8 +14,6 @@ import com.algaworks.algafood.domain.repository.RestauranteRepository;
 @Service
 public class CadastroRestauranteService {
 	
-	private static final String MSG_RESTAURANTE_NAO_EXISTENTE = "Não há nenhum restaraurante cadastrado com o código %d";
-
 	@Autowired
 	private RestauranteRepository restauranteRepository;
 	
@@ -28,7 +26,7 @@ public class CadastroRestauranteService {
 	
 	public Restaurante buscar(Long id) {
 		return restauranteRepository.findById(id).orElseThrow(() -> 
-				new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_EXISTENTE, id)));
+				new RestauranteNaoEncontradoException(id));
 	}
 	
 	public Restaurante salvar(Restaurante restaurante) {

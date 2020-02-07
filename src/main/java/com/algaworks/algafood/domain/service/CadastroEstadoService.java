@@ -9,7 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 
@@ -17,7 +17,7 @@ import com.algaworks.algafood.domain.repository.EstadoRepository;
 public class CadastroEstadoService {
 	
 	private static final String MSG_ESTADO_EM_USO = "Entidade de código %d não pode ser excluida, pois está sendo usada";
-	private static final String MSG_ESTADO_INEXISTENTE = "Não há nenhum estado cadastrado com o código %d";
+
 	@Autowired
 	private EstadoRepository estadoRepository;
 
@@ -27,8 +27,7 @@ public class CadastroEstadoService {
 	
 	public Estado buscar(Long estadoId) {
 			return estadoRepository.findById(estadoId).orElseThrow(() -> 
-				new EntidadeNaoEncontradaException(
-					String.format(MSG_ESTADO_INEXISTENTE, estadoId)));
+				new EstadoNaoEncontradoException(estadoId));
 	}
 
 	public Estado salvar(Estado estado) {
@@ -48,8 +47,7 @@ public class CadastroEstadoService {
 		try {
 			estadoRepository.deleteById(estadoId);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format(MSG_ESTADO_INEXISTENTE, estadoId));
+			throw new EstadoNaoEncontradoException(estadoId);
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
 					String.format(MSG_ESTADO_EM_USO, estadoId));
